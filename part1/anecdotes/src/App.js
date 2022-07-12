@@ -8,6 +8,26 @@ const RandomButton = ({ setAnecdoteIdxState, numAnecdotes }) => {
   )
 }
 
+const Anecdote = ({ anecdotes, votes, index }) => (
+  <>
+    <div>
+      {anecdotes[index]}
+    </div>
+    <div>
+      has {votes[index]} votes
+    </div>
+  </>
+)
+
+const VoteButton = ({ votes, setVotes, index }) => {
+  const newVotes = [...votes];
+  ++newVotes[index]
+
+  return (
+    <button onClick={() => setVotes(newVotes)}>vote</button>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -20,11 +40,15 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
 
   return (
     <div>
-      {anecdotes[selected]}
-      <div><RandomButton setAnecdoteIdxState={setSelected} numAnecdotes={anecdotes.length} /></div>
+      <Anecdote anecdotes={anecdotes} votes={votes} index={selected} />
+      <div>
+        <VoteButton votes={votes} setVotes={setVotes} index={selected} />
+        <RandomButton setAnecdoteIdxState={setSelected} numAnecdotes={anecdotes.length} />
+      </div>
     </div>
   )
 }
