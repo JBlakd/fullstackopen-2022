@@ -17,7 +17,16 @@ const VoteButton = ({ state, setState, text }) => (
   </button>
 )
 
-const Stats = ({ good, neutral, bad }) => {
+const Statistics = ({ good, neutral, bad }) => {
+  if (good === 0 && neutral === 0 && bad === 0) {
+    return (
+      <>
+        <h1>statistics</h1>
+        <div>No feedback given</div>
+      </>
+    )
+  }
+
   const all = good + neutral + bad
   const average = (good - bad) / all;
   const positive = (good / all) * 100;
@@ -44,7 +53,7 @@ const App = () => {
   return (
     <div>
       <Vote good={good} setGood={setGood} neutral={neutral} setNeutral={setNeutral} bad={bad} setBad={setBad} />
-      <Stats good={good} neutral={neutral} bad={bad} />
+      <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
