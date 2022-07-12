@@ -45,7 +45,10 @@ const Statistics = ({ good, neutral, bad }) => {
 }
 
 const StatisticsLine = ({ text, value }) => (
-  <div>{text} {value}</div>
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 )
 
 const App = () => {
