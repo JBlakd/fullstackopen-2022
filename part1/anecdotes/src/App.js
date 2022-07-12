@@ -1,5 +1,13 @@
 import { useState } from 'react'
 
+const RandomButton = ({ setAnecdoteIdxState, numAnecdotes }) => {
+  return (
+    <button onClick={() => setAnecdoteIdxState(Math.floor(Math.random() * numAnecdotes))}>
+      next anecdote
+    </button>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -16,6 +24,7 @@ const App = () => {
   return (
     <div>
       {anecdotes[selected]}
+      <div><RandomButton setAnecdoteIdxState={setSelected} numAnecdotes={anecdotes.length} /></div>
     </div>
   )
 }
