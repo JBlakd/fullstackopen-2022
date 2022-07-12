@@ -1,23 +1,23 @@
 import { useState } from 'react'
 
-const Vote = ({good, setGood, neutral, setNeutral, bad, setBad}) => {
+const Vote = ({ good, setGood, neutral, setNeutral, bad, setBad }) => {
   return (
     <>
       <h1>give feedback</h1>
-      <VoteButton state={good} setState={setGood} text="good"/>
-      <VoteButton state={neutral} setState={setNeutral} text="neutral"/>
-      <VoteButton state={bad} setState={setBad} text="bad"/>
+      <VoteButton state={good} setState={setGood} text="good" />
+      <VoteButton state={neutral} setState={setNeutral} text="neutral" />
+      <VoteButton state={bad} setState={setBad} text="bad" />
     </>
   )
 }
 
-const VoteButton = ({state, setState, text}) => (
+const VoteButton = ({ state, setState, text }) => (
   <button onClick={() => setState(state + 1)}>
     {text}
   </button>
 )
 
-const Stats = ({good, neutral, bad}) =>  {
+const Stats = ({ good, neutral, bad }) => {
   const all = good + neutral + bad
   const average = (good - bad) / all;
   const positive = (good / all) * 100;
@@ -43,8 +43,8 @@ const App = () => {
 
   return (
     <div>
-      <Vote good={good} setGood={setGood} neutral={neutral} setNeutral={setNeutral} bad={bad} setBad={setBad}/>
-      <Stats good={good} neutral={neutral} bad={bad}/>
+      <Vote good={good} setGood={setGood} neutral={neutral} setNeutral={setNeutral} bad={bad} setBad={setBad} />
+      <Stats good={good} neutral={neutral} bad={bad} />
     </div>
   )
 }
