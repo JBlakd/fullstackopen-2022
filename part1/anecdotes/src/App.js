@@ -28,6 +28,22 @@ const VoteButton = ({ votes, setVotes, index }) => {
   )
 }
 
+const MostPopular = ({ anecdotes, votes }) => {
+  let mostPopularIndex = 0
+  for (let i = 0; i < votes.length; ++i) {
+    if (votes[i] > votes[mostPopularIndex]) {
+      mostPopularIndex = i
+    }
+  }
+
+  return (
+    <>
+      <h1>Anecdote with most votes</h1>
+      <Anecdote anecdotes={anecdotes} votes={votes} index={mostPopularIndex} />
+    </>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -44,10 +60,15 @@ const App = () => {
 
   return (
     <div>
-      <Anecdote anecdotes={anecdotes} votes={votes} index={selected} />
+      <div>
+        <Anecdote anecdotes={anecdotes} votes={votes} index={selected} />
+      </div>
       <div>
         <VoteButton votes={votes} setVotes={setVotes} index={selected} />
         <RandomButton setAnecdoteIdxState={setSelected} numAnecdotes={anecdotes.length} />
+      </div>
+      <div>
+        <MostPopular anecdotes={anecdotes} votes={votes} />
       </div>
     </div>
   )
