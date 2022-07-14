@@ -19,14 +19,14 @@ const Form = ({ newEntry, setNewEntry, persons, setPersons }) => {
     let newEntryCopy = structuredClone(newEntry)
     newEntryCopy.name = event.target.value
     setNewEntry(newEntryCopy)
-    console.log(newEntry)
+    // console.log(newEntry)
   }
 
   const numberChangeHandler = (event) => {
     let newEntryCopy = structuredClone(newEntry)
     newEntryCopy.number = event.target.value
     setNewEntry(newEntryCopy)
-    console.log(newEntry)
+    // console.log(newEntry)
   }
 
   return (
