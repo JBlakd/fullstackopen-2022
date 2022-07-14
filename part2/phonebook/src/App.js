@@ -1,21 +1,32 @@
 import { useState } from 'react'
 
-const Form = ({ newName, setNewName, persons, setPersons }) => {
+const Form = ({ newEntry, setNewEntry, persons, setPersons }) => {
   const submitHandler = (event) => {
     event.preventDefault()
 
     document.getElementById('nameInput').value = ''
+    document.getElementById('numberInput').value = ''
 
-    if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    if (persons.find(person => person.name === newEntry.name)) {
+      alert(`${newEntry.name} is already added to phonebook`)
       return;
     }
 
-    const personObject = {
-      name: newName
-    }
+    setPersons(persons.concat(newEntry))
+  }
 
-    setPersons(persons.concat(personObject))
+  const nameChangeHandler = (event) => {
+    let newEntryCopy = structuredClone(newEntry)
+    newEntryCopy.name = event.target.value
+    setNewEntry(newEntryCopy)
+    console.log(newEntry)
+  }
+
+  const numberChangeHandler = (event) => {
+    let newEntryCopy = structuredClone(newEntry)
+    newEntryCopy.number = event.target.value
+    setNewEntry(newEntryCopy)
+    console.log(newEntry)
   }
 
   return (
@@ -23,7 +34,10 @@ const Form = ({ newName, setNewName, persons, setPersons }) => {
       <h2>Phonebook</h2>
       <form onSubmit={submitHandler}>
         <div>
-          name: <input id="nameInput" onChange={(event) => { setNewName(event.target.value) }} />
+          name: <input id="nameInput" onChange={nameChangeHandler} />
+        </div>
+        <div>
+          number: <input id="numberInput" onChange={numberChangeHandler} />
         </div>
         <div>
           <button type="submit">add</button>
@@ -34,7 +48,7 @@ const Form = ({ newName, setNewName, persons, setPersons }) => {
 }
 
 const Entry = ({ person }) => (
-  <div>{person.name}</div>
+  <div>{person.name} {person.number}</div>
 )
 
 const Numbers = ({ persons }) => (
@@ -46,13 +60,13 @@ const Numbers = ({ persons }) => (
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas', number: '040-123456' }
   ])
-  const [newName, setNewName] = useState('')
+  const [newEntry, setNewEntry] = useState({ name: '', number: '' })
 
   return (
     <div>
-      <Form newName={newName} setNewName={setNewName} persons={persons} setPersons={setPersons} />
+      <Form newEntry={newEntry} setNewEntry={setNewEntry} persons={persons} setPersons={setPersons} />
       <Numbers persons={persons} />
     </div>
   )
