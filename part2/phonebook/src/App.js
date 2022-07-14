@@ -31,7 +31,7 @@ const Form = ({ newEntry, setNewEntry, persons, setPersons }) => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h2>add a new</h2>
       <form onSubmit={submitHandler}>
         <div>
           name: <input id="nameInput" onChange={nameChangeHandler} />
@@ -51,23 +51,42 @@ const Entry = ({ person }) => (
   <div>{person.name} {person.number}</div>
 )
 
-const Numbers = ({ persons }) => (
+const Numbers = ({ persons, filter }) => (
   <div>
     <h2>Numbers</h2>
-    {persons.map(person => <Entry key={person.name} person={person} />)}
+    {persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
+      .map(person => <Entry key={person.name} person={person} />)}
   </div>
 )
 
-const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' }
-  ])
-  const [newEntry, setNewEntry] = useState({ name: '', number: '' })
+const Filter = ({ setFilter }) => {
+  const filterChangeHandler = (event) => {
+    setFilter(event.target.value)
+  }
 
   return (
     <div>
+      filter shown with <input onChange={filterChangeHandler}></input>
+    </div>
+  )
+}
+
+const App = () => {
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
+  ])
+  const [newEntry, setNewEntry] = useState({ name: '', number: '' })
+  const [filter, setFilter] = useState('')
+
+  return (
+    <div>
+      <h1>Phonebook</h1>
+      <Filter setFilter={setFilter} />
       <Form newEntry={newEntry} setNewEntry={setNewEntry} persons={persons} setPersons={setPersons} />
-      <Numbers persons={persons} />
+      <Numbers persons={persons} filter={filter} />
     </div>
   )
 }
