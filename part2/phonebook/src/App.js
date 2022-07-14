@@ -3,6 +3,14 @@ import { useState } from 'react'
 const Form = ({ newName, setNewName, persons, setPersons }) => {
   const submitHandler = (event) => {
     event.preventDefault()
+
+    document.getElementById('nameInput').value = ''
+
+    if (persons.find(person => person.name === newName)) {
+      alert(`${newName} is already added to phonebook`)
+      return;
+    }
+
     const personObject = {
       name: newName
     }
@@ -15,7 +23,7 @@ const Form = ({ newName, setNewName, persons, setPersons }) => {
       <h2>Phonebook</h2>
       <form onSubmit={submitHandler}>
         <div>
-          name: <input onChange={(event) => { setNewName(event.target.value) }} />
+          name: <input id="nameInput" onChange={(event) => { setNewName(event.target.value) }} />
         </div>
         <div>
           <button type="submit">add</button>
