@@ -67,7 +67,6 @@ const Weather = ({ country, filteredCountries, setFilteredCountries }) => {
   const foundCountry = filteredCountries.find(c => country.flag === c.flag)
 
   const hook = () => {
-    // if (!foundCountry.hasOwnProperty('openWeather')) {
     console.log(`effect for getting ${country.name.common} capital weather data with url: ${get_req}`)
     axios
       .get(get_req)
@@ -79,8 +78,8 @@ const Weather = ({ country, filteredCountries, setFilteredCountries }) => {
         setFilteredCountries(filteredCountriesCopy)
       })
   }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(hook, [])
-  // }
 
 
   if (foundCountry.hasOwnProperty('openWeather')) {
