@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-const Filter = ({ allCountries, setFilteredCountries }) => {
+const Filter = ({ allCountries, filteredCountries, setFilteredCountries }) => {
 
   const filterChangeHandler = (event) => {
     const filterString = event.target.value
+
+    const filteredCountriesCopy = allCountries.filter(country => country.name.common.toLowerCase().includes(filterString.toLowerCase()))
+    if (filteredCountries.length === 1 && filteredCountriesCopy.length === 1) {
+      console.log("no need to re-render singular country")
+      return
+    }
+
     setFilteredCountries(
       allCountries.filter(country => country.name.common.toLowerCase().includes(filterString.toLowerCase()))
     )
@@ -25,6 +32,9 @@ const SingleCountryView = ({ country, filteredCountries, setFilteredCountries })
     filteredCountriesCopy.find(foundCountry => country.flag === foundCountry.flag).isShown = !country.isShown
     setFilteredCountries(filteredCountriesCopy)
   }
+
+  console.log("filteredCountries.length", filteredCountries.length)
+  country.isShown = (filteredCountries.length === 1)
 
   if (country.isShown) {
     return (
@@ -94,11 +104,6 @@ const Weather = ({ country, filteredCountries, setFilteredCountries }) => {
 const MultiCountryView = ({ filteredCountries, setFilteredCountries }) => {
   if (filteredCountries.length > 10) {
     return (<div>Too many matches, specify another filter</div>)
-  } else if (filteredCountries.length === 1) {
-    let onlyCountry = structuredClone(filteredCountries[0])
-    onlyCountry.isShown = true;
-    // TODO
-    return (<SingleCountryView country={onlyCountry} filteredCountries={filteredCountries} setFilteredCountries={setFilteredCountries} />)
   } else {
     return (filteredCountries.map(c =>
       <div key={c.flag}>
@@ -126,7 +131,7 @@ const App = () => {
 
   return (
     <div>
-      <Filter allCountries={allCountries} setFilteredCountries={setFilteredCountries} />
+      <Filter allCountries={allCountries} filteredCountries={filteredCountries} setFilteredCountries={setFilteredCountries} />
       <MultiCountryView filteredCountries={filteredCountries} setFilteredCountries={setFilteredCountries} />
     </div>
   )
