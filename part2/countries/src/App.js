@@ -56,8 +56,8 @@ const Weather = ({ country, filteredCountries, setFilteredCountries }) => {
 
   const foundCountry = filteredCountries.find(c => country.flag === c.flag)
 
-  // const hook = () => {
-  if (!foundCountry.hasOwnProperty('openWeather')) {
+  const hook = () => {
+    // if (!foundCountry.hasOwnProperty('openWeather')) {
     console.log(`effect for getting ${country.name.common} capital weather data with url: ${get_req}`)
     axios
       .get(get_req)
@@ -68,9 +68,9 @@ const Weather = ({ country, filteredCountries, setFilteredCountries }) => {
         filteredCountriesCopy.find(c => country.flag === c.flag).openWeather = response.data
         setFilteredCountries(filteredCountriesCopy)
       })
-    // }
-    // useEffect(hook, [])
   }
+  useEffect(hook, [])
+  // }
 
 
   if (foundCountry.hasOwnProperty('openWeather')) {
@@ -97,6 +97,7 @@ const MultiCountryView = ({ filteredCountries, setFilteredCountries }) => {
   } else if (filteredCountries.length === 1) {
     let onlyCountry = structuredClone(filteredCountries[0])
     onlyCountry.isShown = true;
+    // TODO
     return (<SingleCountryView country={onlyCountry} filteredCountries={filteredCountries} setFilteredCountries={setFilteredCountries} />)
   } else {
     return (filteredCountries.map(c =>
