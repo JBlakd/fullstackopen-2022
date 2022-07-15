@@ -38,6 +38,7 @@ const SingleCountryView = ({ country, filteredCountries, setFilteredCountries })
           {Object.values(country.languages).map(lang => <li key={lang}>{lang}</li>)}
         </ul>
         <img alt='flag' src={country.flags.png} />
+        <Weather country={country} filteredCountries={filteredCountries} setFilteredCountries={setFilteredCountries} />
       </div>
     )
   } else {
@@ -46,6 +47,47 @@ const SingleCountryView = ({ country, filteredCountries, setFilteredCountries })
         {country.name.common}
         <button onClick={toggleShowHandler}>show</button>
       </div>)
+  }
+}
+
+const Weather = ({ country, filteredCountries, setFilteredCountries }) => {
+  const api_key = process.env.REACT_APP_API_KEY
+  const get_req = `https://api.openweathermap.org/data/2.5/weather?lat=${country.capitalInfo.latlng[0]}&lon=${country.capitalInfo.latlng[1]}&appid=${api_key}`
+
+  const foundCountry = filteredCountries.find(c => country.flag === c.flag)
+
+  // const hook = () => {
+  if (!foundCountry.hasOwnProperty('openWeather')) {
+    console.log(`effect for getting ${country.name.common} capital weather data with url: ${get_req}`)
+    axios
+      .get(get_req)
+      .then(response => {
+        console.log('promise fulfilled for getting country capital weather data')
+        // Add weather attribute to this country
+        let filteredCountriesCopy = structuredClone(filteredCountries)
+        filteredCountriesCopy.find(c => country.flag === c.flag).openWeather = response.data
+        setFilteredCountries(filteredCountriesCopy)
+      })
+    // }
+    // useEffect(hook, [])
+  }
+
+
+  if (foundCountry.hasOwnProperty('openWeather')) {
+    return (
+      <div>
+        <h3>Weather in {foundCountry.capital[0]}</h3>
+        <div>temperature {foundCountry.openWeather.main.temp - 273.15} Celsius</div>
+        <img alt="weather icon" src={`http://openweathermap.org/img/wn/${foundCountry.openWeather.weather[0].icon}.png`}></img>
+        <div>wind {foundCountry.openWeather.wind.speed} m/s</div>
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        <h3>Weather in {country.capital[0]}</h3>
+      </div>
+    )
   }
 }
 
