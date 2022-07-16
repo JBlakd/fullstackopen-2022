@@ -56,15 +56,34 @@ const Form = ({ newEntry, setNewEntry, persons, setPersons }) => {
   )
 }
 
-const Entry = ({ person }) => (
-  <div>{person.name} {person.number}</div>
-)
+const Entry = ({ id, persons, setPersons }) => {
+  const person = persons.find(p => p.id === id)
+  // console.log("id from Entry: ", id)
+  // console.log("person from Entry: ", person)
 
-const Numbers = ({ persons, filter }) => (
+  const deleteEntryHandler = () => {
+    personsService
+      .erase(id)
+      .then(status => {
+        if (status === 200) {
+          setPersons(persons.filter(p => p.id !== id))
+        }
+      })
+  }
+
+  return (
+    <div>
+      {person.name} {person.number}
+      <button onClick={deleteEntryHandler}>delete</button>
+    </div>
+  )
+}
+
+const Numbers = ({ persons, setPersons, filter }) => (
   <div>
     <h2>Numbers</h2>
     {persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
-      .map(person => <Entry key={person.name} person={person} />)}
+      .map(person => <Entry key={person.id} id={person.id} persons={persons} setPersons={setPersons} />)}
   </div>
 )
 
@@ -102,7 +121,7 @@ const App = () => {
       <h1>Phonebook</h1>
       <Filter setFilter={setFilter} />
       <Form newEntry={newEntry} setNewEntry={setNewEntry} persons={persons} setPersons={setPersons} />
-      <Numbers persons={persons} filter={filter} />
+      <Numbers persons={persons} setPersons={setPersons} filter={filter} />
     </div>
   )
 }
