@@ -3,7 +3,7 @@ import axios from 'axios'
 import personsService from './services/persons'
 
 
-const Form = ({ newEntry, setNewEntry, persons, setPersons }) => {
+const Form = ({ newEntry, setNewEntry, persons, setPersons, setNotification }) => {
   const submitHandler = (event) => {
     event.preventDefault()
 
@@ -19,6 +19,16 @@ const Form = ({ newEntry, setNewEntry, persons, setPersons }) => {
             document.getElementById('nameInput').value = ''
             document.getElementById('numberInput').value = ''
           })
+          .catch(error => {
+            setNotification({
+              message: `Information of ${alreadyExistingPerson.name} has already been removed from the server`,
+              isError: true
+            })
+            setPersons(persons.filter(p => p.id !== alreadyExistingPerson.id))
+            setTimeout(() => {
+              setNotification({ message: '', isError: false })
+            }, 3000)
+          })
       }
 
       return
@@ -31,6 +41,10 @@ const Form = ({ newEntry, setNewEntry, persons, setPersons }) => {
         setNewEntry({ name: '', number: '' })
         document.getElementById('nameInput').value = ''
         document.getElementById('numberInput').value = ''
+        setNotification({ message: `Added ${returnedPerson.name}`, isError: false });
+        setTimeout(() => {
+          setNotification({ message: '', isError: false })
+        }, 3000)
       })
 
     // setPersons(persons.concat(newEntry))
@@ -113,10 +127,43 @@ const Filter = ({ setFilter }) => {
   )
 }
 
+const Notification = ({ notification }) => {
+  const normalStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontsize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+
+  const errorStyle = {
+    color: 'red',
+    background: 'lightgrey',
+    fontsize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+
+  if (notification.message === '') {
+    return (<></>)
+  } else {
+    return (
+      <div style={notification.isError ? errorStyle : normalStyle}>
+        {notification.message}
+      </div>
+    )
+  }
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newEntry, setNewEntry] = useState({ name: '', number: '' })
   const [filter, setFilter] = useState('')
+  const [notification, setNotification] = useState({ message: '', isError: false })
 
   const hook = () => {
     console.log('effect for initial rendering of persons')
@@ -133,8 +180,9 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification notification={notification} />
       <Filter setFilter={setFilter} />
-      <Form newEntry={newEntry} setNewEntry={setNewEntry} persons={persons} setPersons={setPersons} />
+      <Form newEntry={newEntry} setNewEntry={setNewEntry} persons={persons} setPersons={setPersons} setNotification={setNotification} />
       <Numbers persons={persons} setPersons={setPersons} filter={filter} />
     </div>
   )
