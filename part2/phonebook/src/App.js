@@ -7,9 +7,21 @@ const Form = ({ newEntry, setNewEntry, persons, setPersons }) => {
   const submitHandler = (event) => {
     event.preventDefault()
 
-    if (persons.find(person => person.name === newEntry.name)) {
-      alert(`${newEntry.name} is already added to phonebook`)
-      return;
+    const alreadyExistingPerson = persons.find(person => person.name === newEntry.name)
+
+    if (alreadyExistingPerson !== undefined) {
+      if (window.confirm(`${alreadyExistingPerson.name} is already added to the phonebook, replace old number with new one?`)) {
+        personsService
+          .update(alreadyExistingPerson.id, newEntry)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => (p.id === returnedPerson.id) ? returnedPerson : p))
+            setNewEntry({ name: '', number: '' })
+            document.getElementById('nameInput').value = ''
+            document.getElementById('numberInput').value = ''
+          })
+      }
+
+      return
     }
 
     personsService
@@ -62,13 +74,15 @@ const Entry = ({ id, persons, setPersons }) => {
   // console.log("person from Entry: ", person)
 
   const deleteEntryHandler = () => {
-    personsService
-      .erase(id)
-      .then(status => {
-        if (status === 200) {
-          setPersons(persons.filter(p => p.id !== id))
-        }
-      })
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personsService
+        .erase(id)
+        .then(status => {
+          if (status === 200) {
+            setPersons(persons.filter(p => p.id !== id))
+          }
+        })
+    }
   }
 
   return (
