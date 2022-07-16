@@ -1,19 +1,27 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import personsService from './services/persons'
+
 
 const Form = ({ newEntry, setNewEntry, persons, setPersons }) => {
   const submitHandler = (event) => {
     event.preventDefault()
-
-    document.getElementById('nameInput').value = ''
-    document.getElementById('numberInput').value = ''
 
     if (persons.find(person => person.name === newEntry.name)) {
       alert(`${newEntry.name} is already added to phonebook`)
       return;
     }
 
-    setPersons(persons.concat(newEntry))
+    personsService
+      .create(newEntry)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewEntry({ name: '', number: '' })
+        document.getElementById('nameInput').value = ''
+        document.getElementById('numberInput').value = ''
+      })
+
+    // setPersons(persons.concat(newEntry))
   }
 
   const nameChangeHandler = (event) => {
