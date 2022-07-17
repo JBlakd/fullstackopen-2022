@@ -37,34 +37,38 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   // console.log("request.params.id", request.params.id)
-  Person.findById(request.params.id).then(p => {
-    response.json(p)
-  })
+  Person.findById(request.params.id)
+    .then(p => {
+      if (p) {
+        response.json(p)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(p => p.id !== id)
-
-  response.status(204).end()
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response) => {
   const inputPerson = request.body
 
   if (!inputPerson.hasOwnProperty("name") || !inputPerson.hasOwnProperty("number")) {
-    response.status(400).json({ error: 'malformed person: name or number is missing' })
-    return
+    response.status(400).json({ error: 'malformed person: name or number is missing' }).end()
   }
-
-  let numDuplicates = 0
 
   Person.count({ name: inputPerson.name })
     .then(c => {
       if (c > 0) {
-        response.status(400).json({ error: 'name must be unique' })
+        response.status(400).json({ error: 'name must be unique' }).end()
         return
       }
 
@@ -76,6 +80,32 @@ app.post('/api/persons', (request, response) => {
     })
 })
 
+app.put('/api/persons/:id', (request, response) => {
+  const inputPerson = request.body
+  // console.log(inputPerson)
+
+  Person.findByIdAndUpdate(request.params.id, inputPerson, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
+})
+
+// error handler
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
+// this has to be the last loaded middleware.
+app.use(errorHandler)
+
+// start server
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
