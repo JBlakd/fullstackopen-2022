@@ -19,11 +19,7 @@ const Form = ({ newEntry, setNewEntry, persons, setPersons, setNotification }) =
             document.getElementById('numberInput').value = ''
           })
           .catch(error => {
-            setNotification({
-              message: `Information of ${alreadyExistingPerson.name} has already been removed from the server`,
-              isError: true
-            })
-            setPersons(persons.filter(p => p.id !== alreadyExistingPerson.id))
+            setNotification({ message: error.response.data.error, isError: true })
             setTimeout(() => {
               setNotification({ message: '', isError: false })
             }, 3000)
@@ -40,7 +36,13 @@ const Form = ({ newEntry, setNewEntry, persons, setPersons, setNotification }) =
         setNewEntry({ name: '', number: '' })
         document.getElementById('nameInput').value = ''
         document.getElementById('numberInput').value = ''
-        setNotification({ message: `Added ${returnedPerson.name}`, isError: false });
+        setNotification({ message: `Added ${returnedPerson.name}`, isError: false })
+        setTimeout(() => {
+          setNotification({ message: '', isError: false })
+        }, 3000)
+      })
+      .catch(error => {
+        setNotification({ message: error.response.data.error, isError: true })
         setTimeout(() => {
           setNotification({ message: '', isError: false })
         }, 3000)

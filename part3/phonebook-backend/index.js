@@ -50,7 +50,7 @@ app.get('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
     .then(result => {
       response.status(204).end()
@@ -58,33 +58,21 @@ app.delete('/api/persons/:id', (request, response) => {
     .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
-  const inputPerson = request.body
+app.post('/api/persons', (request, response, next) => {
+  const acceptablePerson = new Person(request.body)
 
-  if (!inputPerson.hasOwnProperty("name") || !inputPerson.hasOwnProperty("number")) {
-    response.status(400).json({ error: 'malformed person: name or number is missing' }).end()
-  }
-
-  Person.count({ name: inputPerson.name })
-    .then(c => {
-      if (c > 0) {
-        response.status(400).json({ error: 'name must be unique' }).end()
-        return
-      }
-
-      const acceptablePerson = new Person(inputPerson)
-
-      acceptablePerson.save().then(savedPerson => {
-        response.json(savedPerson)
-      })
+  acceptablePerson.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
     })
+    .catch(error => next(error))
 })
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
   const inputPerson = request.body
   // console.log(inputPerson)
 
-  Person.findByIdAndUpdate(request.params.id, inputPerson, { new: true })
+  Person.findByIdAndUpdate(request.params.id, inputPerson, { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -95,9 +83,7 @@ app.put('/api/persons/:id', (request, response) => {
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  }
+  return response.status(400).json({ error: error.message })
 
   next(error)
 }
