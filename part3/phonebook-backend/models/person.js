@@ -5,7 +5,7 @@ const url = process.env.DB_URI
 console.log('connecting to', url)
 
 mongoose.connect(url)
-  .then(result => {
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch((error) => {
@@ -13,7 +13,7 @@ mongoose.connect(url)
   })
 
 const numberValidator = (number) => {
-  console.log("Entered numberValidator")
+  console.log('Entered numberValidator')
   if (number.length < 8) {
     return false
   }
@@ -31,7 +31,7 @@ const numberValidator = (number) => {
     }
 
     for (const section in array) {
-      if (section.match(/^[0-9]+$/) == null) {
+      if (section.match(/^[0-9]+$/) === null) {
         console.log(`section ${section} malformed`)
         return false
       }
@@ -40,7 +40,7 @@ const numberValidator = (number) => {
 
   return true
 }
-const numberValidatorWithMessage = [numberValidator, "malformed number"]
+const numberValidatorWithMessage = [numberValidator, 'malformed number']
 
 const personSchema = new mongoose.Schema({
   name: {
