@@ -1,15 +1,14 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
-const dotenv = require('dotenv');
-dotenv.config();
+const dotenv = require('dotenv')
+dotenv.config()
 
 const app = express()
 
 app.use(express.json())
 // morgan.token('res-body', (req, res) => JSON.stringify(res.body))
-morgan.token('res-body', (req, res) => {
+morgan.token('res-body', (req) => {
   // console.log(req.body)
   return JSON.stringify(req.body)
 })
@@ -52,7 +51,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -80,12 +79,11 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 // error handler
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, request, response) => {
   console.error(error.message)
 
   return response.status(400).json({ error: error.message })
 
-  next(error)
 }
 
 // this has to be the last loaded middleware.
