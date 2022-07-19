@@ -22,11 +22,29 @@ const newBlog = {
   'likes': 132600
 }
 
+const newBlogNoLikes = {
+  'title': 'i\'m just a poor boy nobody likes me',
+  'author': 'bunyim',
+  'url': 'https://leetcode.com/bsok3112/',
+}
+
+const newBlogNoTitle = {
+  'author': 'bunyim',
+  'url': 'https://leetcode.com/bsok3112/',
+  'likes': 2
+}
+
+const newBlogNoUrl = {
+  'title': 'i\'m just a poor boy nobody likes me',
+  'author': 'bunyim',
+  'likes': 2
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
 }
 
 module.exports = {
-  initialBlogs, blogsInDb, newBlog
+  initialBlogs, blogsInDb, newBlog, newBlogNoLikes, newBlogNoUrl, newBlogNoTitle
 }

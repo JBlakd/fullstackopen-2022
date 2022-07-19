@@ -4,8 +4,7 @@ const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
-const logger = require('../utils/logger')
-
+// const logger = require('../utils/logger')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -38,7 +37,7 @@ test('returned blogs use id instead of _id', async () => {
 })
 
 test('post new blog', async () => {
-  logger.info('helper.newBlog: ', helper.newBlog)
+  // logger.info('helper.newBlog: ', helper.newBlog)
   const response = await api
     .post('/api/blogs')
     .send(helper.newBlog)
@@ -54,6 +53,47 @@ test('post new blog', async () => {
   expect(justAddedBlog.author).toBe(helper.newBlog.author)
   expect(justAddedBlog.url).toBe(helper.newBlog.url)
   expect(justAddedBlog.likes).toBe(helper.newBlog.likes)
+})
+
+test('post new blog no likes', async () => {
+  // logger.info('helper.newBlog: ', helper.newBlog)
+  const response = await api
+    .post('/api/blogs')
+    .send(helper.newBlogNoLikes)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  // logger.info('response: ', response.body)
+  const resultBlogs = await helper.blogsInDb()
+  // logger.info('resultBlogs: ', resultBlogs)
+  expect(resultBlogs).toHaveLength(helper.initialBlogs.length + 1)
+  // logger.info('response.body.id: ', response.body.id)
+  const justAddedBlog = resultBlogs.find(b => response.body.id === b.id)
+  expect(justAddedBlog.title).toBe(helper.newBlogNoLikes.title)
+  expect(justAddedBlog.author).toBe(helper.newBlogNoLikes.author)
+  expect(justAddedBlog.url).toBe(helper.newBlogNoLikes.url)
+  expect(justAddedBlog.likes).toBe(0)
+})
+
+test('post new blog no Title', async () => {
+  // logger.info('helper.newBlog: ', helper.newBlog)
+  await api
+    .post('/api/blogs')
+    .send(helper.newBlogNoTitle)
+    .expect(400)
+
+  const resultBlogs = await helper.blogsInDb()
+  expect(resultBlogs).toHaveLength(helper.initialBlogs.length)
+})
+
+test('post new blog no Url', async () => {
+  // logger.info('helper.newBlog: ', helper.newBlog)
+  await api
+    .post('/api/blogs')
+    .send(helper.newBlogNoUrl)
+    .expect(400)
+
+  const resultBlogs = await helper.blogsInDb()
+  expect(resultBlogs).toHaveLength(helper.initialBlogs.length)
 })
 
 afterAll(() => {
