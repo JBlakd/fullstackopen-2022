@@ -62,12 +62,12 @@ const mostLikes = (blogs) => {
     }
   })
 
-  console.log('hashMap: ', hashMap)
+  // console.log('hashMap: ', hashMap)
 
   const resultArray = [...hashMap.entries()]
     .reduce((acc, cur) => (cur[1] > acc[1]) ? cur : acc) // ['Dijkstra', 5]
 
-  console.log('resultArray: ', resultArray)
+  // console.log('resultArray: ', resultArray)
 
   return (
     {
