@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+// const logger = require('../utils/logger')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({})
@@ -7,10 +8,13 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
+  // logger.info('incoming POST request body: ', request.body)
   const blog = new Blog(request.body)
+  // logger.info('incoming POST blog: ', blog)
 
   const savedBlog = await blog.save()
-  response.status(201).json(savedBlog)
+  // logger.info(savedBlog.toJSON())
+  response.status(201).json(savedBlog.toJSON())
 })
 
 module.exports = blogsRouter

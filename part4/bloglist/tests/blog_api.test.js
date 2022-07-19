@@ -2,10 +2,10 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
+const api = supertest(app)
 const Blog = require('../models/blog')
 const logger = require('../utils/logger')
 
-const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -28,13 +28,32 @@ test('all blogs are returned', async () => {
   expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
-test.only('returned blogs use id instead of _id', async () => {
+test('returned blogs use id instead of _id', async () => {
   const response = await api.get('/api/blogs')
   response.body.forEach((blog) => {
-    logger.info('each blog: ', blog)
+    // logger.info('each blog: ', blog)
     expect(blog.id).toBeDefined()
     expect(blog._id).not.toBeDefined()
   })
+})
+
+test('post new blog', async () => {
+  logger.info('helper.newBlog: ', helper.newBlog)
+  const response = await api
+    .post('/api/blogs')
+    .send(helper.newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  // logger.info('response: ', response.body)
+  const resultBlogs = await helper.blogsInDb()
+  // logger.info('resultBlogs: ', resultBlogs)
+  expect(resultBlogs).toHaveLength(helper.initialBlogs.length + 1)
+  // logger.info('response.body.id: ', response.body.id)
+  const justAddedBlog = resultBlogs.find(b => response.body.id === b.id)
+  expect(justAddedBlog.title).toBe(helper.newBlog.title)
+  expect(justAddedBlog.author).toBe(helper.newBlog.author)
+  expect(justAddedBlog.url).toBe(helper.newBlog.url)
+  expect(justAddedBlog.likes).toBe(helper.newBlog.likes)
 })
 
 afterAll(() => {

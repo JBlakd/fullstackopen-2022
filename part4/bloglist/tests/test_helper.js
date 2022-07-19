@@ -15,11 +15,18 @@ const initialBlogs = [
   }
 ]
 
+const newBlog = {
+  'title': 'shout out to all my homophobic fans 🚫🌈🤍',
+  'author': 'LilNasX',
+  'url': 'https://twitter.com/LilNasX/status/1545582753609003008',
+  'likes': 132600
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
 }
 
 module.exports = {
-  initialBlogs, blogsInDb
+  initialBlogs, blogsInDb, newBlog
 }
