@@ -96,6 +96,53 @@ test('post new blog no Url', async () => {
   expect(resultBlogs).toHaveLength(helper.initialBlogs.length)
 })
 
+test('delete blog', async () => {
+  const initialBlogs = await helper.blogsInDb()
+  const initialBlogsCopy = JSON.parse(JSON.stringify(initialBlogs))
+
+  await api
+    .delete(`/api/blogs/${initialBlogs[0].id}`)
+    .expect(204)
+
+  const afterDeleteBlogs = await helper.blogsInDb()
+  expect(afterDeleteBlogs[0]).toEqual(initialBlogsCopy[1])
+})
+
+test('delete nonexistent blog', async () => {
+  await api
+    .delete('/api/blogs/ffffffffffffffffffffffff')
+    .expect(204)
+})
+
+test('update blog', async () => {
+  const initialBlogs = await helper.blogsInDb()
+
+  await api
+    .put(`/api/blogs/${initialBlogs[0].id}`)
+    .send({ title: 'updated title' })
+    .expect(200)
+
+  const afterUpdateBlogs = await helper.blogsInDb()
+  expect(afterUpdateBlogs
+    .find(b => b.id === initialBlogs[0].id)
+    .title
+  ).toBe('updated title')
+})
+
+test('update blog with invalid property results in no change', async () => {
+  const initialBlogs = await helper.blogsInDb()
+
+  await api
+    .put(`/api/blogs/${initialBlogs[0].id}`)
+    .send({ isInsane: 'eetswa bro' })
+    .expect(400)
+
+  const afterUpdateBlogs = await helper.blogsInDb()
+  expect(afterUpdateBlogs
+    .find(b => b.id === initialBlogs[0].id)
+  ).toEqual(initialBlogs[0])
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
