@@ -2,8 +2,10 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 const User = require('../models/user')
+const logger = require('../utils/logger')
 
 loginRouter.post('/', async (request, response) => {
+  logger.info('incoming login request body: ', request.body)
   const { username, password } = request.body
 
   // Find the supposedly self-identifying user from the userbase
@@ -12,6 +14,8 @@ loginRouter.post('/', async (request, response) => {
   const passwordCorrect = (user === null)
     ? false
     : await bcrypt.compare(password, user.passwordHash)
+
+  logger.info('password correct: ', passwordCorrect)
 
   if (!(user && passwordCorrect)) {
     return response.status(401).json({
@@ -25,6 +29,8 @@ loginRouter.post('/', async (request, response) => {
   }
 
   const token = jwt.sign(userForToken, process.env.SECRET)
+
+  logger.info('/api/login token:', token)
 
   response
     .status(200)

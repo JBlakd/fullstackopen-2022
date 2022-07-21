@@ -6,7 +6,7 @@ const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/User')
-// const logger = require('../utils/logger')
+const logger = require('../utils/logger')
 
 describe('/api/blogs', () => {
   beforeEach(async () => {
@@ -39,7 +39,7 @@ describe('/api/blogs', () => {
     })
   })
 
-  test.only('post new blog no login', async () => {
+  test('post new blog no login', async () => {
     // logger.info('helper.newBlog: ', helper.newBlog)
     await api
       .post('/api/blogs')
@@ -49,9 +49,30 @@ describe('/api/blogs', () => {
   })
 
   test('post new blog with login', async () => {
+    const newUser = {
+      username: 'jaboukie',
+      name: 'Jaboukie Young-White',
+      password: 'funnydude',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
     // logger.info('helper.newBlog: ', helper.newBlog)
+    const loginResponse = await api
+      .post('/api/login')
+      .send({ 'username': 'jaboukie', 'password': 'funnydude' })
+
+    logger.info('loginResponse.body: ', loginResponse.body)
+    const token = `bearer ${loginResponse.body.token}`
+    // const token = loginResponse.token
+
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(helper.newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -68,9 +89,31 @@ describe('/api/blogs', () => {
   })
 
   test('post new blog no likes with login', async () => {
+    const newUser = {
+      username: 'bunyim',
+      name: 'Jaboukie Young-White',
+      password: 'saddude',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    // logger.info('helper.newBlog: ', helper.newBlog)
+    const loginResponse = await api
+      .post('/api/login')
+      .send({ 'username': 'bunyim', 'password': 'saddude' })
+
+    logger.info('loginResponse.body: ', loginResponse.body)
+    const token = `bearer ${loginResponse.body.token}`
+    // const token = loginResponse.token
+
     // logger.info('helper.newBlog: ', helper.newBlog)
     const response = await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(helper.newBlogNoLikes)
       .expect(201)
       .expect('Content-Type', /application\/json/)
