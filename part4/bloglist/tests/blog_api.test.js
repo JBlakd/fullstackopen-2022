@@ -1,146 +1,114 @@
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const supertest = require('supertest')
 const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/User')
 // const logger = require('../utils/logger')
 
-beforeEach(async () => {
-  await Blog.deleteMany({})
+describe('/api/blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
 
-  const blogObjects = helper.initialBlogs
-    .map(blog => new Blog(blog))
-  const promiseArray = blogObjects.map(blog => blog.save())
-  await Promise.all(promiseArray)
-})
+    const blogObjects = helper.initialBlogs
+      .map(blog => new Blog(blog))
+    const promiseArray = blogObjects.map(blog => blog.save())
+    await Promise.all(promiseArray)
+  })
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-})
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
 
-test('all blogs are returned', async () => {
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(helper.initialBlogs.length)
-})
+  test('all blogs are returned', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
+  })
 
-test('returned blogs use id instead of _id', async () => {
-  const response = await api.get('/api/blogs')
-  response.body.forEach((blog) => {
-    // logger.info('each blog: ', blog)
-    expect(blog.id).toBeDefined()
-    expect(blog._id).not.toBeDefined()
+  test('returned blogs use id instead of _id', async () => {
+    const response = await api.get('/api/blogs')
+    response.body.forEach((blog) => {
+      // logger.info('each blog: ', blog)
+      expect(blog.id).toBeDefined()
+      expect(blog._id).not.toBeDefined()
+    })
+  })
+
+  test('post new blog', async () => {
+    // logger.info('helper.newBlog: ', helper.newBlog)
+    const response = await api
+      .post('/api/blogs')
+      .send(helper.newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    // logger.info('response: ', response.body)
+    const resultBlogs = await helper.blogsInDb()
+    // logger.info('resultBlogs: ', resultBlogs)
+    expect(resultBlogs).toHaveLength(helper.initialBlogs.length + 1)
+    // logger.info('response.body.id: ', response.body.id)
+    const justAddedBlog = resultBlogs.find(b => response.body.id === b.id)
+    expect(justAddedBlog.title).toBe(helper.newBlog.title)
+    expect(justAddedBlog.author).toBe(helper.newBlog.author)
+    expect(justAddedBlog.url).toBe(helper.newBlog.url)
+    expect(justAddedBlog.likes).toBe(helper.newBlog.likes)
+  })
+
+  test('post new blog no likes', async () => {
+    // logger.info('helper.newBlog: ', helper.newBlog)
+    const response = await api
+      .post('/api/blogs')
+      .send(helper.newBlogNoLikes)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    // logger.info('response: ', response.body)
+    const resultBlogs = await helper.blogsInDb()
+    // logger.info('resultBlogs: ', resultBlogs)
+    expect(resultBlogs).toHaveLength(helper.initialBlogs.length + 1)
+    // logger.info('response.body.id: ', response.body.id)
+    const justAddedBlog = resultBlogs.find(b => response.body.id === b.id)
+    expect(justAddedBlog.title).toBe(helper.newBlogNoLikes.title)
+    expect(justAddedBlog.author).toBe(helper.newBlogNoLikes.author)
+    expect(justAddedBlog.url).toBe(helper.newBlogNoLikes.url)
+    expect(justAddedBlog.likes).toBe(0)
   })
 })
 
-test('post new blog', async () => {
-  // logger.info('helper.newBlog: ', helper.newBlog)
-  const response = await api
-    .post('/api/blogs')
-    .send(helper.newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
-  // logger.info('response: ', response.body)
-  const resultBlogs = await helper.blogsInDb()
-  // logger.info('resultBlogs: ', resultBlogs)
-  expect(resultBlogs).toHaveLength(helper.initialBlogs.length + 1)
-  // logger.info('response.body.id: ', response.body.id)
-  const justAddedBlog = resultBlogs.find(b => response.body.id === b.id)
-  expect(justAddedBlog.title).toBe(helper.newBlog.title)
-  expect(justAddedBlog.author).toBe(helper.newBlog.author)
-  expect(justAddedBlog.url).toBe(helper.newBlog.url)
-  expect(justAddedBlog.likes).toBe(helper.newBlog.likes)
-})
+describe('/api/users', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
 
-test('post new blog no likes', async () => {
-  // logger.info('helper.newBlog: ', helper.newBlog)
-  const response = await api
-    .post('/api/blogs')
-    .send(helper.newBlogNoLikes)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
-  // logger.info('response: ', response.body)
-  const resultBlogs = await helper.blogsInDb()
-  // logger.info('resultBlogs: ', resultBlogs)
-  expect(resultBlogs).toHaveLength(helper.initialBlogs.length + 1)
-  // logger.info('response.body.id: ', response.body.id)
-  const justAddedBlog = resultBlogs.find(b => response.body.id === b.id)
-  expect(justAddedBlog.title).toBe(helper.newBlogNoLikes.title)
-  expect(justAddedBlog.author).toBe(helper.newBlogNoLikes.author)
-  expect(justAddedBlog.url).toBe(helper.newBlogNoLikes.url)
-  expect(justAddedBlog.likes).toBe(0)
-})
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
 
-test('post new blog no Title', async () => {
-  // logger.info('helper.newBlog: ', helper.newBlog)
-  await api
-    .post('/api/blogs')
-    .send(helper.newBlogNoTitle)
-    .expect(400)
+    await user.save()
+  })
 
-  const resultBlogs = await helper.blogsInDb()
-  expect(resultBlogs).toHaveLength(helper.initialBlogs.length)
-})
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
 
-test('post new blog no Url', async () => {
-  // logger.info('helper.newBlog: ', helper.newBlog)
-  await api
-    .post('/api/blogs')
-    .send(helper.newBlogNoUrl)
-    .expect(400)
+    const newUser = {
+      username: 'jaboukie',
+      name: 'Jaboukie Young-White',
+      password: 'funnydude',
+    }
 
-  const resultBlogs = await helper.blogsInDb()
-  expect(resultBlogs).toHaveLength(helper.initialBlogs.length)
-})
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-test('delete blog', async () => {
-  const initialBlogs = await helper.blogsInDb()
-  const initialBlogsCopy = JSON.parse(JSON.stringify(initialBlogs))
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
-  await api
-    .delete(`/api/blogs/${initialBlogs[0].id}`)
-    .expect(204)
-
-  const afterDeleteBlogs = await helper.blogsInDb()
-  expect(afterDeleteBlogs[0]).toEqual(initialBlogsCopy[1])
-})
-
-test('delete nonexistent blog', async () => {
-  await api
-    .delete('/api/blogs/ffffffffffffffffffffffff')
-    .expect(204)
-})
-
-test('update blog', async () => {
-  const initialBlogs = await helper.blogsInDb()
-
-  await api
-    .put(`/api/blogs/${initialBlogs[0].id}`)
-    .send({ title: 'updated title' })
-    .expect(200)
-
-  const afterUpdateBlogs = await helper.blogsInDb()
-  expect(afterUpdateBlogs
-    .find(b => b.id === initialBlogs[0].id)
-    .title
-  ).toBe('updated title')
-})
-
-test('update blog with invalid property results in no change', async () => {
-  const initialBlogs = await helper.blogsInDb()
-
-  await api
-    .put(`/api/blogs/${initialBlogs[0].id}`)
-    .send({ isInsane: 'eetswa bro' })
-    .expect(400)
-
-  const afterUpdateBlogs = await helper.blogsInDb()
-  expect(afterUpdateBlogs
-    .find(b => b.id === initialBlogs[0].id)
-  ).toEqual(initialBlogs[0])
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).toContain(newUser.username)
+  })
 })
 
 afterAll(() => {
