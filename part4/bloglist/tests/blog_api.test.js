@@ -137,7 +137,7 @@ describe('/api/users', () => {
     const newUser = {
       username: 'bo',
       name: 'Jaboukie Young-White',
-      password: '13334',
+      password: '13334'
     }
 
     await api
