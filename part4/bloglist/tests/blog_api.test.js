@@ -39,7 +39,16 @@ describe('/api/blogs', () => {
     })
   })
 
-  test('post new blog', async () => {
+  test.only('post new blog no login', async () => {
+    // logger.info('helper.newBlog: ', helper.newBlog)
+    await api
+      .post('/api/blogs')
+      .send(helper.newBlog)
+      .expect(401)
+
+  })
+
+  test('post new blog with login', async () => {
     // logger.info('helper.newBlog: ', helper.newBlog)
     const response = await api
       .post('/api/blogs')
@@ -58,7 +67,7 @@ describe('/api/blogs', () => {
     expect(justAddedBlog.likes).toBe(helper.newBlog.likes)
   })
 
-  test('post new blog no likes', async () => {
+  test('post new blog no likes with login', async () => {
     // logger.info('helper.newBlog: ', helper.newBlog)
     const response = await api
       .post('/api/blogs')
