@@ -128,6 +128,66 @@ describe('/api/blogs', () => {
     expect(justAddedBlog.url).toBe(helper.newBlogNoLikes.url)
     expect(justAddedBlog.likes).toBe(0)
   })
+
+  test('delete blog fail with no login', async () => {
+    const initialBlogs = await helper.blogsInDb()
+    const firstBlog = initialBlogs[0]
+    logger.info('firstBlog: ', firstBlog)
+
+    await api
+      .delete(`/api/blogs/${firstBlog.id}`)
+      .expect(401)
+
+  })
+
+  test('delete blog success with login', async () => {
+    const newUser = {
+      username: 'bunyim',
+      name: 'bunyim sok',
+      password: 'saddude',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    // logger.info('helper.newBlog: ', helper.newBlog)
+    const loginResponse = await api
+      .post('/api/login')
+      .send({ 'username': 'bunyim', 'password': 'saddude' })
+
+    logger.info('loginResponse.body: ', loginResponse.body)
+    const token = `bearer ${loginResponse.body.token}`
+    // const token = loginResponse.token
+
+    logger.info('token to be sent: ', token)
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', token)
+      .send(helper.newBlogNoLikes)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    // logger.info('response: ', response.body)
+    const resultBlogs = await helper.blogsInDb()
+    // logger.info('resultBlogs: ', resultBlogs)
+    expect(resultBlogs).toHaveLength(helper.initialBlogs.length + 1)
+    // logger.info('response.body.id: ', response.body.id)
+    const justAddedBlog = resultBlogs.find(b => response.body.id === b.id)
+    expect(justAddedBlog.title).toBe(helper.newBlogNoLikes.title)
+    expect(justAddedBlog.author).toBe(helper.newBlogNoLikes.author)
+    expect(justAddedBlog.url).toBe(helper.newBlogNoLikes.url)
+    expect(justAddedBlog.likes).toBe(0)
+
+    await api
+      .delete(`/api/blogs/${response.body.id}`)
+      .set('Authorization', token)
+      .expect(204)
+
+    const afterDeleteBlogs = await helper.blogsInDb()
+    expect(afterDeleteBlogs).toHaveLength(helper.initialBlogs.length)
+  })
 })
 
 describe('/api/users', () => {
