@@ -69,6 +69,13 @@ blogsRouter.delete('/:id', async (request, response) => {
     return response.status(401).json({ error: 'invalid token' }).end()
   }
 
+  // Check if the token is legit
+  const blogToRemove = await Blog.findById(request.params.id)
+  logger.info('blogToRemove: ', blogToRemove)
+  if (blogToRemove.user.toString() !== decodedToken.id.toString()) {
+    return response.status(401).json({ error: 'unauthorised token' })
+  }
+
   await Blog.findByIdAndRemove(request.params.id)
   response.status(204).end()
 })

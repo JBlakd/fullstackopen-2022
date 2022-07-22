@@ -12,6 +12,11 @@ describe('/api/blogs', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
 
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+
     const blogObjects = helper.initialBlogs
       .map(blog => new Blog(blog))
     const promiseArray = blogObjects.map(blog => blog.save())
@@ -187,6 +192,61 @@ describe('/api/blogs', () => {
 
     const afterDeleteBlogs = await helper.blogsInDb()
     expect(afterDeleteBlogs).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('delete unowned blog fail with invalid login', async () => {
+    const newUser = {
+      username: 'bunyim',
+      name: 'bunyim sok',
+      password: 'saddude',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    // logger.info('helper.newBlog: ', helper.newBlog)
+    const loginResponse = await api
+      .post('/api/login')
+      .send({ 'username': 'bunyim', 'password': 'saddude' })
+
+    logger.info('loginResponse.body: ', loginResponse.body)
+    const token = `bearer ${loginResponse.body.token}`
+    // const token = loginResponse.token
+
+    logger.info('token to be sent: ', token)
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', token)
+      .send(helper.newBlogNoLikes)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    // logger.info('response: ', response.body)
+    const resultBlogs = await helper.blogsInDb()
+    // logger.info('resultBlogs: ', resultBlogs)
+    expect(resultBlogs).toHaveLength(helper.initialBlogs.length + 1)
+    // logger.info('response.body.id: ', response.body.id)
+    const justAddedBlog = resultBlogs.find(b => response.body.id === b.id)
+    expect(justAddedBlog.title).toBe(helper.newBlogNoLikes.title)
+    expect(justAddedBlog.author).toBe(helper.newBlogNoLikes.author)
+    expect(justAddedBlog.url).toBe(helper.newBlogNoLikes.url)
+    expect(justAddedBlog.likes).toBe(0)
+
+    const rootLoginResponse = await api
+      .post('/api/login')
+      .send({ 'username': 'root', 'password': 'sekret' })
+
+    const invalidToken = `bearer ${rootLoginResponse.body.token}`
+
+    await api
+      .delete(`/api/blogs/${response.body.id}`)
+      .set('Authorization', invalidToken)
+      .expect(401)
+
+    const afterDeleteBlogs = await helper.blogsInDb()
+    expect(afterDeleteBlogs).toHaveLength(helper.initialBlogs.length + 1)
   })
 })
 
