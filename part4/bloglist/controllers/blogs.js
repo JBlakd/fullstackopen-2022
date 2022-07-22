@@ -5,14 +5,14 @@ const User = require('../models/user')
 // const { usersInDb } = require('../tests/test_helper')
 const logger = require('../utils/logger')
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  logger.info('authorization: ', authorization)
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
+// const getTokenFrom = request => {
+//   const authorization = request.get('authorization')
+//   logger.info('authorization: ', authorization)
+//   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+//     return authorization.substring(7)
+//   }
+//   return null
+// }
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1, id: 1 })
@@ -24,11 +24,12 @@ blogsRouter.post('/', async (request, response) => {
     response.status(400).end()
   }
 
-  const token = getTokenFrom(request)
-  if (!token) {
+  // const token = getTokenFrom(request)
+  logger.info('request.token, ', request.token)
+  if (!request.token) {
     return response.status(401).json({ error: 'missing token' }).end()
   }
-  const decodedToken = jwt.verify(token, process.env.SECRET)
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
   logger.info('decoded token: ', decodedToken)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'invalid token' }).end()

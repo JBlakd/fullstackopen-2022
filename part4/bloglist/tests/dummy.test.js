@@ -70,7 +70,7 @@ const listWithManyBlogs = [
 ]
 
 describe('total likes', () => {
-  test('empty list', () => {
+  test.only('empty list', () => {
     const result = listHelper.totalLikes([])
     expect(result).toBe(0)
   })

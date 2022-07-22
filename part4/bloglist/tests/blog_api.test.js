@@ -91,7 +91,7 @@ describe('/api/blogs', () => {
   test('post new blog no likes with login', async () => {
     const newUser = {
       username: 'bunyim',
-      name: 'Jaboukie Young-White',
+      name: 'bunyim sok',
       password: 'saddude',
     }
 
@@ -110,7 +110,7 @@ describe('/api/blogs', () => {
     const token = `bearer ${loginResponse.body.token}`
     // const token = loginResponse.token
 
-    // logger.info('helper.newBlog: ', helper.newBlog)
+    logger.info('token to be sent: ', token)
     const response = await api
       .post('/api/blogs')
       .set('Authorization', token)
