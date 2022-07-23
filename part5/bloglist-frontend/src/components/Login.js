@@ -5,7 +5,7 @@ const Login = ({ username, setUsername, password, setPassword, handleLogin, noti
 
   return (
     <div>
-      <h1>Notes</h1>
+      <h1>Blogs</h1>
       <Notification notification={notification} />
 
       <form onSubmit={handleLogin}>
