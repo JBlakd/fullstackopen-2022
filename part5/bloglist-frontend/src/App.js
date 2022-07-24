@@ -34,7 +34,7 @@ const App = () => {
       const fetchData = async () => {
         const blogsReturned = await blogService.getAll()
         console.log('blogsReturned', blogsReturned.data)
-        setBlogs(blogsReturned.data)
+        setBlogs(blogsReturned.data.sort((a, b) => b.likes - a.likes))
       }
       fetchData()
     }

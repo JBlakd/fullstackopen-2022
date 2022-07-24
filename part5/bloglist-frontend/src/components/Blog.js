@@ -24,10 +24,9 @@ const Blog = ({ blog, blogs, setBlogs }) => {
       if (b.id === response.id) {
         return { ...b, likes: response.likes }
       }
-
       return b
     })
-    setBlogs(updatedBlogs)
+    setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes))
   }
 
   const blogStyle = {
