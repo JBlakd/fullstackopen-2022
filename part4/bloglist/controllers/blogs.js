@@ -85,7 +85,7 @@ blogsRouter.put('/:id', async (request, response) => {
     response.status(400).end()
   }
 
-  // logger.info('PUT request body', request.body)
+  logger.info('PUT request body', request.body)
   // logger.info('keys in Blog.paths', Object.keys(Blog.schema.paths))
 
   Object.keys(request.body).forEach(attribute => {
@@ -96,9 +96,20 @@ blogsRouter.put('/:id', async (request, response) => {
     }
   })
 
-  // logger.info('PUT all valid keys')
+  const existingBlog = await Blog.findById(request.params.id)
+  logger.info('PUT request existingBlog', existingBlog)
+  if (existingBlog === null) {
+    logger.info('PUT blog not found')
+    response.status(404).end()
+  }
+  if (existingBlog.user.toString() !== request.body.user) {
+    logger.info('PUT user field does not match existing blog user field')
+    logger.info('existingBlog.user: ', existingBlog.user, 'request.body.user: ', request.body.user)
+    response.status(400).end()
+  }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, request.body)
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, request.body, { new: true })
+  logger.info('PUT request updatedBlog: ', updatedBlog)
   response.status(200).json(updatedBlog.toJSON())
 })
 

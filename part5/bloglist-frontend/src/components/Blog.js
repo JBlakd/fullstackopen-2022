@@ -1,10 +1,33 @@
 import { useState } from "react"
+import blogService from "../services/blogs"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, blogs, setBlogs }) => {
   const [isShown, setIsShown] = useState(false)
 
   const toggleIsShown = () => {
     setIsShown(!isShown)
+  }
+
+  const handleLike = async () => {
+    const response = await blogService.update(blog.id, {
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.user.name,
+      title: blog.title,
+      url: blog.url
+    })
+
+    console.log('handleLike response: ', response)
+
+    // update blogs
+    const updatedBlogs = blogs.map(b => {
+      if (b.id === response.id) {
+        return { ...b, likes: response.likes }
+      }
+
+      return b
+    })
+    setBlogs(updatedBlogs)
   }
 
   const blogStyle = {
@@ -25,7 +48,7 @@ const Blog = ({ blog }) => {
           {blog.url}
         </div>
         <div>
-          likes {blog.likes} <button>like</button>
+          likes {blog.likes} <button onClick={handleLike}>like</button>
         </div>
         <div>
           {blog.user.name}
