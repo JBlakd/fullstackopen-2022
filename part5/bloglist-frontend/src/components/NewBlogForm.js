@@ -20,7 +20,7 @@ const NewBlogForm = ({ notification, setNotification, blogs, setBlogs, parentTog
       parentTogglableRef.current.toggleVisibility()
 
       const justAddedBlog = await blogService.create(newBlogState)
-      console.log(justAddedBlog)
+      console.log('justAddedBlog', justAddedBlog)
       setBlogs(blogs.concat(justAddedBlog))
       console.log('blogsAfterSet: ', blogs)
 

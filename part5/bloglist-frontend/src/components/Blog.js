@@ -1,7 +1,17 @@
 import { useState } from "react"
 import blogService from "../services/blogs"
 
-const Blog = ({ blog, blogs, setBlogs }) => {
+const DeleteButton = ({ isDeleteButtonShown, handleDelete }) => {
+  if (isDeleteButtonShown) {
+    return (
+      <button onClick={handleDelete}>delete</button>
+    )
+  } else {
+    return <></>
+  }
+}
+
+const Blog = ({ blog, blogs, setBlogs, user }) => {
   const [isShown, setIsShown] = useState(false)
 
   const toggleIsShown = () => {
@@ -29,6 +39,17 @@ const Blog = ({ blog, blogs, setBlogs }) => {
     setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes))
   }
 
+  const handleDelete = async () => {
+    const status = await blogService.erase(blog.id)
+    console.log('delete blog status: ', status)
+    if (status === 204) {
+      // delete blog from state
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+    } else {
+      console.error('delete blog failed with status code', status)
+    }
+  }
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -52,6 +73,7 @@ const Blog = ({ blog, blogs, setBlogs }) => {
         <div>
           {blog.user.name}
         </div>
+        <DeleteButton isDeleteButtonShown={user.username === blog.user.username} handleDelete={handleDelete} />
       </div>
     )
   } else {
@@ -60,6 +82,7 @@ const Blog = ({ blog, blogs, setBlogs }) => {
         <div>
           {blog.title} {blog.author} <button onClick={toggleIsShown}>view</button>
         </div>
+        <DeleteButton isDeleteButtonShown={user.username === blog.user.username} handleDelete={handleDelete} />
       </div>
     )
   }

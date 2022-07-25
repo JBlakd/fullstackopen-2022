@@ -46,13 +46,16 @@ blogsRouter.post('/', async (request, response) => {
   // logger.info('incoming POST blog: ', blog)
 
   const savedBlog = await blog.save()
-  // logger.info(savedBlog.toJSON())
+  logger.info('savedBlog: ', savedBlog)
 
   // save the newly added blog to the user document as well
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
-  response.status(201).json(savedBlog.toJSON())
+  const finalBlog = await Blog.findById(savedBlog.id).populate('user')
+  logger.info('finalBlog: ', finalBlog)
+
+  response.status(201).json(finalBlog.toJSON())
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
