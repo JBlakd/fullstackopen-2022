@@ -95,7 +95,7 @@ const App = () => {
         <LoginStatus user={user} handleLogout={handleLogout} />
         <br></br>
         <Togglable buttonLabel="new blog" ref={blogFormTogglableRef}>
-          <NewBlogForm notification={notification} setNotification={setNotification} blogs={blogs} setBlogs={setBlogs} parentTogglableRef={blogFormTogglableRef} />
+          <NewBlogForm setNotification={setNotification} blogs={blogs} setBlogs={setBlogs} parentTogglableRef={blogFormTogglableRef} />
         </Togglable>
         <div>
           {blogs.map(blog =>

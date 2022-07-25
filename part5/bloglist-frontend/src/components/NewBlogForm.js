@@ -1,7 +1,7 @@
-import { useState } from "react"
-import blogService from "../services/blogs"
+import { useState } from 'react'
+import blogService from '../services/blogs'
 
-const NewBlogForm = ({ notification, setNotification, blogs, setBlogs, parentTogglableRef }) => {
+const NewBlogForm = ({ setNotification, blogs, setBlogs, parentTogglableRef }) => {
   const [newBlogState, setNewBlogState] = useState({ title: '', author: '', url: '' })
 
   const handleNewBlog = async (event) => {
