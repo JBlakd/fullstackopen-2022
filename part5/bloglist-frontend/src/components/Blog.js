@@ -60,7 +60,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
 
   if (isShown) {
     return (
-      <div style={blogStyle}>
+      <div style={blogStyle} className={'blog'}>
         <div>
           {blog.title} {blog.author} <button onClick={toggleIsShown}>hide</button>
         </div>
@@ -78,7 +78,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     )
   } else {
     return (
-      <div style={blogStyle}>
+      <div style={blogStyle} className={'blog'}>
         <div>
           {blog.title} {blog.author} <button onClick={toggleIsShown}>view</button>
         </div>
