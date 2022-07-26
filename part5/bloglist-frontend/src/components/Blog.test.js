@@ -41,8 +41,23 @@ test('renders url and likes after toggle shown', async () => {
   expect(div).not.toHaveTextContent('likes')
   const sessionUser = userEvent.setup()
   const toggleIsShownButton = component.container.querySelector('.toggleIsShownButton')
-  console.log('toggleIsShownButton: ',)
   await sessionUser.click(toggleIsShownButton)
   expect(div).toHaveTextContent('https://twitter.com/jaboukie/status/1026509837239169024')
   expect(div).toHaveTextContent('likes')
 })
+
+// test.only('mock like handler called twice when like button pressed twice', async () => {
+//   expect(div).not.toHaveTextContent('https://twitter.com/jaboukie/status/1026509837239169024')
+//   expect(div).not.toHaveTextContent('likes')
+//   const sessionUser = userEvent.setup()
+//   const toggleIsShownButton = component.container.querySelector('.toggleIsShownButton')
+//   await sessionUser.click(toggleIsShownButton)
+//   expect(div).toHaveTextContent('https://twitter.com/jaboukie/status/1026509837239169024')
+//   expect(div).toHaveTextContent('likes')
+
+//   expect(handleLikeSpy).not.toHaveBeenCalled()
+//   const likeButton = component.container.querySelector('.likeButton')
+//   await sessionUser.click(likeButton)
+//   expect(handleLikeSpy).toHaveBeenCalled()
+
+// })

@@ -19,6 +19,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   }
 
   const handleLike = async () => {
+    console.log('handleLike was called')
     const response = await blogService.update(blog.id, {
       user: blog.user.id,
       likes: blog.likes + 1,
