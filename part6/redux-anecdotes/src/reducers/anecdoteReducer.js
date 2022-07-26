@@ -17,9 +17,23 @@ const asObject = (anecdote) => {
   }
 }
 
+export const likeAnecdote = (content) => (
+  {
+    type: 'LIKE_ANECDOTE',
+    data: content
+  }
+)
+
+export const createAnecdote = (content) => (
+  {
+    type: 'NEW_ANECDOTE',
+    data: content
+  }
+)
+
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
+const anecdoteReducer = (state = initialState, action) => {
   console.log('state now: ', state)
   console.log('action', action)
 
@@ -47,4 +61,4 @@ const reducer = (state = initialState, action) => {
   return ret.sort((a, b) => b.votes - a.votes)
 }
 
-export default reducer
+export default anecdoteReducer
