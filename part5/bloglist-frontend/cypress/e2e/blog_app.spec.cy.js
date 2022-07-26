@@ -2,6 +2,12 @@
 describe('Blog app', function () {
   beforeEach(function () {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
+    const user = {
+      name: 'Root Master',
+      username: 'root',
+      password: 'sekret'
+    }
+    cy.request('POST', 'http://localhost:3003/api/users/', user)
     cy.visit('http://localhost:3000')
   })
 
@@ -10,14 +16,14 @@ describe('Blog app', function () {
     cy.contains('login')
   })
 
-  it('can login', function () {
-    const user = {
-      name: 'Root Master',
-      username: 'root',
-      password: 'sekret'
-    }
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
+  it('login failed wrong credentials', function () {
+    cy.get('#username').type('invalid_user')
+    cy.get('#password').type('invalid_password')
+    cy.get('#login-button').click()
+    cy.contains('Wrong Credentials')
+  })
 
+  it('can login', function () {
     cy.get('#username').type('root')
     cy.get('#password').type('sekret')
     cy.get('#login-button').click()
