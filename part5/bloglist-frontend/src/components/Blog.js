@@ -4,7 +4,7 @@ import blogService from '../services/blogs'
 const DeleteButton = ({ isDeleteButtonShown, handleDelete }) => {
   if (isDeleteButtonShown) {
     return (
-      <button onClick={handleDelete}>delete</button>
+      <button className={'deleteButton'} onClick={handleDelete}>delete</button>
     )
   } else {
     return <></>

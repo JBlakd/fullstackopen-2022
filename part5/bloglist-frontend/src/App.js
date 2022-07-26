@@ -53,6 +53,7 @@ const App = () => {
       )
 
       setUser(user)
+      blogService.setToken(user.token)
       // setUsername('')
       // setPassword('')
     } catch (exception) {

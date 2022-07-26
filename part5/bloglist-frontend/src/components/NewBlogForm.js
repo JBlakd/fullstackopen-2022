@@ -43,6 +43,7 @@ const NewBlogForm = ({ setNotification, blogs, setBlogs, parentTogglableRef }) =
         <div>
           title:
           <input
+            id='blog-title-input'
             type="text"
             value={newBlogState.title}
             name="Title"
@@ -55,6 +56,7 @@ const NewBlogForm = ({ setNotification, blogs, setBlogs, parentTogglableRef }) =
         <div>
           author:
           <input
+            id='blog-author-input'
             type="text"
             value={newBlogState.author}
             name="Author"
@@ -67,6 +69,7 @@ const NewBlogForm = ({ setNotification, blogs, setBlogs, parentTogglableRef }) =
         <div>
           url:
           <input
+            id='blog-url-input'
             type="text"
             value={newBlogState.url}
             name="Url"
@@ -76,7 +79,7 @@ const NewBlogForm = ({ setNotification, blogs, setBlogs, parentTogglableRef }) =
             }}
           />
         </div>
-        <button type="submit">create</button>
+        <button id='blog-submit-button' type="submit">create</button>
       </form>
     </div>
   )
