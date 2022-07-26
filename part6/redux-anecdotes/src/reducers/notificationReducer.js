@@ -5,7 +5,7 @@ export const notificationChange = notification => {
   }
 }
 
-const notificationReducer = (state = 'ALL', action) => {
+const notificationReducer = (state = '', action) => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
       return action.notification

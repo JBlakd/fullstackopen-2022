@@ -10,11 +10,15 @@ const Notification = () => {
   }
 
   console.log('current notification: ', notification)
-  return (
-    <div style={style}>
-      {notification}
-    </div>
-  )
+  if (notification !== '') {
+    return (
+      <div style={style}>
+        {notification}
+      </div>
+    )
+  } else {
+    return (<></>)
+  }
 }
 
 export default Notification
