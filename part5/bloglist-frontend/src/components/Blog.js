@@ -62,13 +62,13 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     return (
       <div style={blogStyle} className={'blog'}>
         <div>
-          {blog.title} {blog.author} <button onClick={toggleIsShown}>hide</button>
+          {blog.title} {blog.author} <button onClick={toggleIsShown} className={'toggleIsShownButton'}>hide</button>
         </div>
         <div>
           {blog.url}
         </div>
         <div>
-          likes {blog.likes} <button onClick={handleLike}>like</button>
+          likes {blog.likes} <button onClick={handleLike} className={'likeButton'}>like</button>
         </div>
         <div>
           {blog.user.name}
@@ -80,7 +80,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     return (
       <div style={blogStyle} className={'blog'}>
         <div>
-          {blog.title} {blog.author} <button onClick={toggleIsShown}>view</button>
+          {blog.title} {blog.author} <button onClick={toggleIsShown} className={'toggleIsShownButton'}>view</button>
         </div>
         <DeleteButton isDeleteButtonShown={user.username === blog.user.username} handleDelete={handleDelete} />
       </div>
