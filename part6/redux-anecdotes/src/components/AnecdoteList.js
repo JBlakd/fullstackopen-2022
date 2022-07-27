@@ -28,16 +28,18 @@ const Anecdote = ({ anecdote }) => {
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(state => state.anecdotes)
+  const filter = useSelector(state => state.filter)
+  // console.log('AnecdoteList anecdotes:', anecdotes)
+  // console.log('AnecdoteList filter:', filter)
 
   return (
-    <ul>
-      {anecdotes.map(a =>
-        <Anecdote
-          key={a.id}
-          anecdote={a}
-        />
-      )}
-    </ul>
+    <div>
+      {anecdotes.map(a => {
+        if (filter === '' || a.content.toLowerCase().includes(filter.toLowerCase())) {
+          return (<Anecdote key={a.id} anecdote={a} />)
+        }
+      })}
+    </div>
   )
 }
 
