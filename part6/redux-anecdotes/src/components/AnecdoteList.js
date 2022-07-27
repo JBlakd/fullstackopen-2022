@@ -38,6 +38,7 @@ const AnecdoteList = () => {
         if (filter === '' || a.content.toLowerCase().includes(filter.toLowerCase())) {
           return (<Anecdote key={a.id} anecdote={a} />)
         }
+        return <></>
       })}
     </div>
   )
