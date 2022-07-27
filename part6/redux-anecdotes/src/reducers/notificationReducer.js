@@ -13,21 +13,14 @@ const notificationSlice = createSlice({
   }
 })
 
-// export const notificationChange = notification => {
-//   return {
-//     type: 'SET_NOTIFICATION',
-//     notification,
-//   }
-// }
-
-// const notificationReducer = (state = '', action) => {
-//   switch (action.type) {
-//     case 'SET_NOTIFICATION':
-//       return action.notification
-//     default:
-//       return state
-//   }
-// }
+export const setNotification = (content, timeoutSec) => {
+  return async dispatch => {
+    dispatch(notificationChange(content))
+    setTimeout(() => {
+      dispatch(notificationChange(''))
+    }, timeoutSec * 1000)
+  }
+}
 
 export const { notificationChange } = notificationSlice.actions
 export default notificationSlice.reducer
