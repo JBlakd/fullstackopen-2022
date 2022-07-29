@@ -1,6 +1,11 @@
 const calculateBmi = (height: number, weight: number): string => {
-  const bmi: number = weight / (height * height);
+  if (isNaN(height) || isNaN(weight)) {
+    throw new Error('malformed input')
+  }
 
+  const bmi: number = weight / ((height / 100) * (height / 100));
+
+  console.log(`height: ${height}, weight: ${weight}`)
   console.log('BMI: ', bmi);
 
   if (bmi < 18.5) {
@@ -14,4 +19,4 @@ const calculateBmi = (height: number, weight: number): string => {
   }
 }
 
-console.log(calculateBmi(1.645, 62.2));
+export default calculateBmi
