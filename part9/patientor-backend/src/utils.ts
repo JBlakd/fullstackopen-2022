@@ -12,6 +12,7 @@ const parseStringVal = (stringVal: unknown): string => {
   return stringVal;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isGender = (param: any): param is Gender => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   return Object.values(Gender).includes(param);
