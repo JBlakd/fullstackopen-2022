@@ -12,9 +12,9 @@ app.get('/bmi', (req, res) => {
       weight: req.query.weight,
       height: req.query.height,
       bmi: calculateBmi(Number(req.query.height), Number(req.query.weight))
-    })
+    });
   } catch (ex) {
-    res.json({ error: "malformed parameters" })
+    res.json({ error: "malformed parameters" });
   }
 });
 
