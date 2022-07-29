@@ -11,39 +11,78 @@ interface CoursePartBase {
   type: string;
 }
 
-interface CourseNormalPart extends CoursePartBase {
-  type: "normal";
+interface CoursePartBaseWithDescriptions extends CoursePartBase {
   description: string;
+}
+
+interface CourseNormalPart extends CoursePartBaseWithDescriptions {
+  type: "normal";
 }
 interface CourseProjectPart extends CoursePartBase {
   type: "groupProject";
   groupProjectCount: number;
 }
 
-interface CourseSubmissionPart extends CoursePartBase {
+interface CourseSubmissionPart extends CoursePartBaseWithDescriptions {
   type: "submission";
-  description: string;
   exerciseSubmissionLink: string;
 }
 
-type CoursePart = CourseNormalPart | CourseProjectPart | CourseSubmissionPart;
-
-const Course = ({ name, exerciseCount, type }: CoursePartBase): JSX.Element => {
-  return (
-    <p>
-      {name} {exerciseCount} {type}
-    </p>
-  )
+interface CourseSpecialPart extends CoursePartBaseWithDescriptions {
+  type: "special",
+  requirements: Array<string>
 }
 
-const Content = ({ parts }: { parts: Array<CoursePartBase> }): JSX.Element => {
+type CoursePart = CourseNormalPart | CourseProjectPart | CourseSubmissionPart | CourseSpecialPart;
+
+const Part = ({ coursePart }: { coursePart: CoursePart }) => {
+  switch (coursePart.type) {
+    case "normal":
+      return (
+        <p>
+          <strong>{coursePart.name} {coursePart.exerciseCount}</strong> <br></br>
+
+        </p>
+      )
+    case "groupProject":
+      return (
+        <p>
+          <strong>{coursePart.name} {coursePart.exerciseCount}</strong> <br></br>
+          project exercises {coursePart.groupProjectCount}
+        </p>
+      )
+    case "submission":
+      return (
+        <p>
+          <strong>{coursePart.name} {coursePart.exerciseCount}</strong> <br></br>
+          <em>{coursePart.description}</em> <br></br>
+          {coursePart.exerciseSubmissionLink}
+        </p>
+      )
+    case "special":
+      return (
+        <p>
+          <strong>{coursePart.name} {coursePart.exerciseCount}</strong> <br></br>
+          required skills: {coursePart.requirements.map((r, i) => {
+            return (i === coursePart.requirements.length - 1) ? r : `${r}, `;
+          })}
+        </p>
+      )
+    default:
+      break;
+  }
+
+  return (<></>)
+}
+
+const Content = ({ parts }: { parts: Array<CoursePart> }): JSX.Element => {
   const generateKey = () => {
     return Math.random().toString(36).substring(2, 7);
   }
 
   return (
     <div>
-      {parts.map(p => <Course key={generateKey()} name={p.name} exerciseCount={p.exerciseCount} type={p.type} />)}
+      {parts.map(p => <Part key={generateKey()} coursePart={p} />)}
     </div>
 
   )
@@ -64,13 +103,13 @@ const App = () => {
     {
       name: "Fundamentals",
       exerciseCount: 10,
-      description: "This is the leisured course part",
+      description: "This is the leisurely course part",
       type: "normal"
     },
     {
       name: "Advanced",
       exerciseCount: 7,
-      description: "This is the harded course part",
+      description: "This is the hardest course part",
       type: "normal"
     },
     {
@@ -85,6 +124,13 @@ const App = () => {
       description: "Confusing description",
       exerciseSubmissionLink: "https://fake-exercise-submit.made-up-url.dev",
       type: "submission"
+    },
+    {
+      name: "Backend development",
+      exerciseCount: 21,
+      description: "Typing the backend",
+      requirements: ["nodejs", "jest"],
+      type: "special"
     }
   ]
 
