@@ -9,8 +9,10 @@ router.get('/', (_req, res) => {
   res.send(patientService.getNonSensitiveEntries());
 });
 
-router.post('/', (_req, res) => {
-  res.send('Saving a patient!');
+router.post('/', (req, res) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  const newPatientEntry = patientService.addPatient(req.body);
+  res.json(newPatientEntry);
 });
 
 export default router;
