@@ -13,13 +13,31 @@ type ratingWithDescription = {
   description: string
 };
 
+// const parseCommandLineArguments = (args: Array<string>): Array<number> => {
+//   // console.log('command line args: ', args)
+//   if (args.length < 3) {
+//     throw new Error('Not enough arguments. Gotta provide data for at least 1 day!');
+//   }
+
+//   const ret: Array<number> = args.slice(3, args.length).map(a => Number(a));
+//   if (ret.some(val => isNaN(val))) {
+//     throw new Error('Found an argument that couldn\'t be converted to a valid number');
+//   }
+
+//   return ret;
+// };
+
 const parseArguments = (args: Array<string>): Array<number> => {
+  if (args === undefined) {
+    throw new Error('parameters missing');
+  }
+
   // console.log('command line args: ', args)
   if (args.length < 3) {
     throw new Error('Not enough arguments. Gotta provide data for at least 1 day!');
   }
 
-  const ret: Array<number> = args.slice(3, args.length).map(a => Number(a));
+  const ret: Array<number> = args.map(a => Number(a));
   if (ret.some(val => isNaN(val))) {
     throw new Error('Found an argument that couldn\'t be converted to a valid number');
   }
@@ -28,6 +46,10 @@ const parseArguments = (args: Array<string>): Array<number> => {
 };
 
 const calculateExercises = (input: Array<number>, targetHours = 2): exerciseCalculatorOutput => {
+  if (input === undefined || targetHours === undefined) {
+    throw new Error('parameters missing');
+  }
+
   function calculateRating(average: number, targetHours: number): ratingWithDescription {
     const percentageHit: number = average / targetHours;
 
@@ -39,6 +61,8 @@ const calculateExercises = (input: Array<number>, targetHours = 2): exerciseCalc
       return { rating: 2, description: "slow down cowboy, careful not to overtrain" };
     }
   }
+
+  console.log('input: ', input);
 
   const trainingDays: number = input.reduce((acc, cur) => (cur != 0) ? acc + 1 : acc, 0);
 
@@ -56,4 +80,6 @@ const calculateExercises = (input: Array<number>, targetHours = 2): exerciseCalc
   };
 };
 
-console.log(calculateExercises(parseArguments(process.argv), 2));
+export { calculateExercises, parseArguments };
+
+// console.log(calculateExercises(parseCommandLineArguments(process.argv), 2));
