@@ -11,7 +11,7 @@ const PORT = 3001;
 
 app.get('/api/ping', (_req, res) => {
   console.log('someone pinged here');
-  res.send('pong');
+  res.send({ emptyarray: [] });
 });
 
 app.use('/api/diagnoses', diagnosisRouter);

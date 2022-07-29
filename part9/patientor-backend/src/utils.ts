@@ -29,13 +29,15 @@ const parseGender = (gender: unknown): Gender => {
 type PatientFields = { name: unknown, dateOfBirth: unknown, ssn: unknown, gender: unknown, occupation: unknown };
 
 const toNewPatientEntry = ({ name, dateOfBirth, ssn, gender, occupation }: PatientFields): NewPatientEntry => {
+  const emptyEntryArray: Entry[] = [];
+
   const newEntry: NewPatientEntry = {
     name: parseStringVal(name),
     dateOfBirth: parseStringVal(dateOfBirth),
     ssn: parseStringVal(ssn),
     gender: parseGender(gender),
     occupation: parseStringVal(occupation),
-    entries: new Array<Entry>()
+    entries: emptyEntryArray
   };
 
   return newEntry;
