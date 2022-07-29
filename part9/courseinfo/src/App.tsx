@@ -41,7 +41,7 @@ const Part = ({ coursePart }: { coursePart: CoursePart }) => {
       return (
         <p>
           <strong>{coursePart.name} {coursePart.exerciseCount}</strong> <br></br>
-
+          <em>{coursePart.description}</em>
         </p>
       )
     case "groupProject":
