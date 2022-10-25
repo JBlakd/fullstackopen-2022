@@ -113,6 +113,15 @@ const CreateNew = (props) => {
           <input {...info} />
         </div>
         <button>create</button>
+        <button onClick={(e) => { 
+          // prevents the button from performing its default functionality as a submit button
+          e.preventDefault();
+          content.reset();
+          author.reset();
+          info.reset();
+        }}>
+          reset
+        </button>
       </form>
     </div>
   )
