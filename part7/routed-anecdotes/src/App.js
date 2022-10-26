@@ -76,20 +76,20 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const content = useField('text');
-  const author = useField('text');
-  const info = useField('text');
+  const { reset: contentReset, ...contentNoReset } = useField('text');
+  const { reset: authorReset, ...authorNoReset } = useField('text');
+  const { reset: infoReset, ...infoNoReset } = useField('text');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
+      content: contentNoReset.value,
+      author: contentNoReset.value,
+      info: contentNoReset.value,
       votes: 0
     });
-    props.setNotification(`a new anecdote ${content.value} created!`);
+    props.setNotification(`a new anecdote ${contentNoReset.value} created!`);
     navigate('/')
     setTimeout(() => {
       props.setNotification('');
@@ -102,23 +102,23 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...contentNoReset} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...authorNoReset} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...infoNoReset} />
         </div>
         <button>create</button>
         <button onClick={(e) => { 
           // prevents the button from performing its default functionality as a submit button
           e.preventDefault();
-          content.reset();
-          author.reset();
-          info.reset();
+          contentReset();
+          authorReset();
+          infoReset();
         }}>
           reset
         </button>
