@@ -85,8 +85,8 @@ const CreateNew = (props) => {
     e.preventDefault();
     props.addNew({
       content: contentNoReset.value,
-      author: contentNoReset.value,
-      info: contentNoReset.value,
+      author: authorNoReset.value,
+      info: infoNoReset.value,
       votes: 0
     });
     props.setNotification(`a new anecdote ${contentNoReset.value} created!`);
